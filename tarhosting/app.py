@@ -44,10 +44,12 @@ def deploy(name):
 
 @app.route('/undeploy/<path:name>', methods=['GET'])
 def undeploy(name):
-    shutil.rmtree(name, ignore_errors=True)
+    tar_dir = "%s/%s" % (app.config['STATIC_DIR'], name)
+    shutil.rmtree(tar_dir, ignore_errors=True)
     return 'Done'
 
 
+# not used by docker container
 @app.route('/static/<path:filename>')
 def send_from(filename):
-    return send_from_directory(app.config['STATIC_DIR'], filename)
+    return "%s/%s" % (app.config['STATIC_DIR'], filename)

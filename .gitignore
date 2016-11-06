@@ -1,0 +1,36 @@
+# python temp files
+*.py[cod]
+
+# Editor tmp files
+.*.sw*
+
+# Packags
+*.egg
+*.egg-info
+.pip
+dist
+build
+eggs
+parts
+bin
+var
+sdist
+develop-eggs
+.installed.cfg
+lib
+lib64
+
+# Installer logs
+pip-log.txt
+
+# Unit test / coverage reports
+.cache
+.coverage
+.tox
+nosetests.xml
+htmlcov
+
+
+# Virtual Environment
+venv
+

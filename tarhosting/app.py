@@ -50,4 +50,4 @@ def undeploy(name):
 
 @app.route('/static/<path:filename>')
 def send_from(filename):
-    return send_from_directory(app.config['STATIC'], filename)
+    return send_from_directory(app.config['STATIC_DIR'], filename)

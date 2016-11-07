@@ -26,6 +26,7 @@ def deploy(name):
 
         file = request.files['file']
         if file and (file.filename.endswith('.tar.gz') or
+                     file.filename.endswith('.tgz') or
                      file.filename.endswith('.tar')):
             filename = secure_filename(file.filename)
             out_file = os.path.join(app.config['UPLOAD_FOLDER'], filename)

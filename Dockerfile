@@ -1,5 +1,7 @@
 FROM python:2.7-alpine
 
+ENV TARHOSTING_STATIC_DIR /static
+
 RUN apk add --no-cache nginx-lua \
         supervisor
 

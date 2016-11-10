@@ -10,6 +10,8 @@ app = Flask(__name__)
 app.config.from_object('tarhosting.config')
 app.secret_key = app.config['SECRET_KEY']
 
+app.static_folder=app.config['STATIC_DIR']
+
 
 @app.route("/")
 def index():

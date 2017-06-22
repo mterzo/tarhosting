@@ -1,0 +1,15 @@
+<title>Tar Hosting</title>
+
+<body>
+    <p>Post it and host it</p>
+
+    <a href='browse'>Browse</a>
+
+    <pre>
+    $ curl -F file=@html.tgz http://{{ URL }}deploy/(optional path)
+    $ wget http://{{ URL }}browse/(optional path)
+    - or -
+    $ wget http://{{ URL }}static/(optional path)/filename.txt
+    $ curl http://{{ URL }}undeploy/<path>
+    </pre>
+</body>

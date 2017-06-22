@@ -1,7 +1,8 @@
 import os
 import tarfile
-from flask import Flask, request, flash, redirect
-from flask import send_from_directory
+from flask import Flask, request, flash, redirect, render_template
+from flask import Blueprint
+from flask.ext.autoindex import AutoIndexBlueprint
 import shutil
 from werkzeug.utils import secure_filename
 
@@ -10,29 +11,31 @@ app = Flask(__name__)
 app.config.from_object('tarhosting.config')
 app.secret_key = app.config['SECRET_KEY']
 
-app.static_folder=app.config['STATIC_DIR']
+auto_bp = Blueprint('auto_bp', __name__)
+AutoIndexBlueprint(auto_bp, browse_root=app.config['STATIC_DIR'])
+app.register_blueprint(auto_bp, url_prefix='/browse')
 
 
 @app.route("/")
 def index():
-   return 'hello world'
+    return render_template('index.html', URL=request.url)
 
 
 @app.route('/deploy/<path:name>', methods=['POST'])
 def deploy(name):
     if request.method == 'POST':
-    	# check if the post request has the file part
-    	if 'file' not in request.files:
+        # check if the post request has the file part
+        if 'file' not in request.files:
             flash('No file part')
             return redirect('/')
 
-        file = request.files['file']
-        if file and (file.filename.endswith('.tar.gz') or
-                     file.filename.endswith('.tgz') or
-                     file.filename.endswith('.tar')):
-            filename = secure_filename(file.filename)
+        upload_file = request.files['file']
+        if upload_file and (upload_file.filename.endswith('.tar.gz') or
+                            upload_file.filename.endswith('.tgz') or
+                            upload_file.filename.endswith('.tar')):
+            filename = secure_filename(upload_file.filename)
             out_file = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            file.save(out_file)
+            upload_file.save(out_file)
             tar_dir = "%s/%s" % (app.config['STATIC_DIR'], name)
             shutil.rmtree(tar_dir, ignore_errors=True)
             tar = tarfile.open(out_file)
@@ -50,9 +53,3 @@ def undeploy(name):
     tar_dir = "%s/%s" % (app.config['STATIC_DIR'], name)
     shutil.rmtree(tar_dir, ignore_errors=True)
     return 'Done'
-
-
-# not used by docker container
-@app.route('/static/<path:filename>')
-def send_from(filename):
-    return "%s/%s" % (app.config['STATIC_DIR'], filename)

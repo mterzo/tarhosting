@@ -54,37 +54,37 @@ stages:
 unit2.7:
   image: python:2.7
   before_script:
-	- pip install -r requirements-dev.txt
-	- pip install -r requirements.txt
+    - pip install -r requirements-dev.txt
+    - pip install -r requirements.txt
   stage: Test
   script:
-	- py.test --cov=reg
-	- coverage html
+    - py.test --cov=reg
+    - coverage html
   after_script:
-	- tar -C htmlcov -zcf htmlunit.tar.gz .
+    - tar -C htmlcov -zcf htmlunit.tar.gz .
   artifacts:
-	expire_in: 1 week
-	paths:
-	  - htmlunit.tar.gz
+    expire_in: 1 week
+    paths:
+    - htmlunit.tar.gz
 
 coveragereport:
   stage: deploy
   dependencies:
-	- unit2.7
+    - unit2.7
   script:
-	- curl -v -X POST -F file=@htmlunit.tar.gz  http://<HOST>:<PORT>/deploy/${CI_PROJECT_NAME}/${CI_BUILD_REF_NAME}
+    - curl -v -X POST -F file=@htmlunit.tar.gz  http://<HOST>:<PORT>/deploy/${CI_PROJECT_NAME}/${CI_BUILD_REF_NAME}
   when: manual
   environment:
-	name: reviews/$CI_BUILD_REF_NAME
-	url: http://<HOST>:<PORT>/static/<PROJECT>/$CI_BUILD_REF_NAME/
-	on_stop: retire_coveragereport
+    name: reviews/$CI_BUILD_REF_NAME
+    url: http://<HOST>:<PORT>/static/<PROJECT>/$CI_BUILD_REF_NAME/
+    on_stop: retire_coveragereport
 
 retire_coveragereport:
   stage: deploy
   when: manual
   script:
-	- curl http://<HOST>:<PORT>/undeploy/${CI_PROJECT_NAME}/${CI_BUILD_REF_NAME}
+    - curl http://<HOST>:<PORT>/undeploy/${CI_PROJECT_NAME}/${CI_BUILD_REF_NAME}
   environment:
-	name: reviews/$CI_BUILD_REF_NAME
-	action: stop
+    name: reviews/$CI_BUILD_REF_NAME
+    action: stop
 ```

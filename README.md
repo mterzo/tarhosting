@@ -12,7 +12,7 @@ docker run -d -v /srv/docker/tarhosting:/static -p 6080:80 terzom/tarhosting
 # API
 
 ## Get
-To retive data publish
+To retrieve data publish
 ```
 curl http://<host>:<port>/static/<directory>/path
 ```
@@ -20,7 +20,7 @@ curl http://<host>:<port>/static/<directory>/path
 ## POST /deploy
 Publish a tarball.
 
-To pulish static conten stored in `html.tgz` and deploy it to the directory
+To publish static content stored in `html.tgz` and deploy it to the directory
 abc.
 
 ```
@@ -35,14 +35,14 @@ curl http://localhost:5000/static/abc/def/ghi/index.html
 ```
 
 ## GET /undeploy
-To clean up directories use undeploy.  This is a recusrive operation, so it will
+To clean up directories use undeploy.  This is a recursive operation, so it will
 start at top level.
 
 ```
-curl ttp://localhost:5000/undeploy/abc/def/ghi
+curl http://localhost:5000/undeploy/abc/def/ghi
 ```
 
-# Gitlab CI intgration
+# Gitlab CI integration
 This is the entire purpose to deploy documentation and test results from CI.  This service is provided with
 pages inside of gitlab which is a really nice feature. Though if you running CE you don't have that option to host content.
 
@@ -65,8 +65,8 @@ unit2.7:
   artifacts:
     expire_in: 1 week
     paths:
-      - htmlunit.tar.gz
-      
+    - htmlunit.tar.gz
+
 coveragereport:
   stage: deploy
   dependencies:
@@ -88,4 +88,3 @@ retire_coveragereport:
     name: reviews/$CI_BUILD_REF_NAME
     action: stop
 ```
-

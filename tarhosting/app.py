@@ -2,7 +2,7 @@ import os
 import tarfile
 from flask import Flask, request, flash, redirect, render_template
 from flask import Blueprint
-from flask.ext.autoindex import AutoIndexBlueprint
+from flask_autoindex import AutoIndex
 import shutil
 from werkzeug.utils import secure_filename
 
@@ -11,14 +11,20 @@ app = Flask(__name__)
 app.config.from_object('tarhosting.config')
 app.secret_key = app.config['SECRET_KEY']
 
-auto_bp = Blueprint('auto_bp', __name__)
-AutoIndexBlueprint(auto_bp, browse_root=app.config['STATIC_DIR'])
-app.register_blueprint(auto_bp, url_prefix='/browse')
+auto_index = AutoIndex(app, browse_root=app.config['STATIC_DIR'],
+                       add_url_rules=False)
 
 
 @app.route("/")
 def index():
     return render_template('index.html', URL=request.url)
+
+
+@app.route('/browse')
+@app.route('/browse/')
+@app.route('/browse/<path:path>')
+def autoindex(path='.'):
+    return auto_index.render_autoindex(path)
 
 
 @app.route('/deploy/<path:name>', methods=['POST'])
@@ -37,15 +43,18 @@ def deploy(name):
             out_file = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             upload_file.save(out_file)
             tar_dir = "%s/%s" % (app.config['STATIC_DIR'], name)
-            shutil.rmtree(tar_dir, ignore_errors=True)
             tar = tarfile.open(out_file)
+            root = tar.getnames()[0]
+            if root.startswith('/') or root.startswith('../'):
+                return "Tarball not rooted properly using '/' or '../'\n"
+            shutil.rmtree('{}/{}'.format(tar_dir, root), ignore_errors=True)
             tar.extractall(path=tar_dir)
             tar.close()
             os.unlink(out_file)
         else:
-            return "Wrong extention"
-        return 'Upload complete'
-    return "wrong method"
+            return "Wrong extention\n"
+        return 'Upload complete\n'
+    return "wrong method\n"
 
 
 @app.route('/undeploy/<path:name>', methods=['GET'])

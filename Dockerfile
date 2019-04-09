@@ -1,4 +1,4 @@
-FROM python:2.7-alpine
+FROM python:3.7-alpine
 
 ENV TARHOSTING_STATIC_DIR /static
 ENV TARHOSTING_TIMEOUT 30

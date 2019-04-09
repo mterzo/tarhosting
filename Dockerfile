@@ -12,4 +12,4 @@ COPY tarhosting /usr/src/app/tarhosting
 
 EXPOSE 80
 
-CMD gunicorn -b 0.0.0.0:80 -t $TARHOSTING_TIMEOUT --access-logfile=/dev/stdout tarhosting.app:app
+CMD gunicorn -b 0.0.0.0:80 -t $TARHOSTING_TIMEOUT --access-logfile - tarhosting.app:app
